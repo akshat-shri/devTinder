@@ -1,21 +1,28 @@
 const express = require("express");
-const {adminAuth, userAuth} = require("./middlewares/auth")
+
 
 const app = express();
 
-app.use("/admin",adminAuth);
+// app.use("/",(err,req,res,next)=>{
+//     if(err){
+//     res.status(500).send("something went wrong");
+// }
+// });
 
-app.use("/user",userAuth,(req,res)=>{
+app.get("/user",(req,res)=>{
+    try{
+    throw new error("ajsh");
     res.send("user authorized");
+    } catch(err){
+        res.status(500).send("something wrong");
+    }
 });
 
-app.get("/admin/getAllData",(req,res)=>{
-        res.send("yup get it");
+app.use("/",(err,req,res,next)=>{
+    if(err){
+    res.status(500).send("something went wrong");
+}
 });
-
-app.get("/admin/deleteUser",(req,res)=>{
-    res.send("user deleted");
-})
 
 app.listen(2000, () => {
   console.log("Server is running on port 2000");
