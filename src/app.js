@@ -15,7 +15,7 @@ const app = express();
 // });
 
 app.get("/user",(req,res)=>{
-    res.send({Firstname:"Akshat", Lastname:"Shrivastava"});
+    res.send({Firstname:"Akshat", Lastname:"Shrivastava"}); 
 });
 
 app.post("/user",(req,res)=>{
