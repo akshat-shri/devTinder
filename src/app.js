@@ -5,6 +5,52 @@ const User = require("./models/user");
 
 app.use(express.json());
 
+app.get("/user", async (req, res) => {
+    const userEmail = req.body.emailId;
+    try {
+      const users = await User.findOne({ emailId: userEmail });
+      if(!users){
+          res.status(404).send("user not found");
+      }
+      else { 
+          res.send(users);
+      }
+    } catch (err) {
+      res.status(400).send("something went wrong");
+    }
+  });
+
+// app.get("/user", async (req, res) => {
+//   const userEmail = req.body.emailId;
+//   try {
+//     const users = await User.find({ emailId: userEmail });
+//     if(users.length === 0){
+//         res.status(404).send("user not found");
+//     }
+//     else { 
+//         res.send(users);
+//     }
+//   } catch (err) {
+//     res.status(400).send("something went wrong");
+//   }
+// });
+
+app.get("/feed", async(req,res)=>{
+    try{
+        const users = await User.find({});
+        if(users.length === 0){
+            res.status(404).send("no user found");
+        }
+        else {
+            res.send(users);
+        }
+
+    }catch(err){
+        res.status(400).send("something went wrong");
+    }
+
+});
+
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
   try {
@@ -14,6 +60,7 @@ app.post("/signup", async (req, res) => {
     res.status(400).send("error in creating user:" + err.message);
   }
 });
+
 
 connectDB()
   .then(() => {
