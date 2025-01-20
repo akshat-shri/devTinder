@@ -1,29 +1,34 @@
 const express = require("express");
-
-
+const connectDB = require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-// app.use("/",(err,req,res,next)=>{
-//     if(err){
-//     res.status(500).send("something went wrong");
-// }
-// });
+app.post("/signup", async(req,res)=>{
+    const user = new User({
+        firstName: "Akshat",
+        lastName:"Shrivastava",
+        emailId:"akshatshri@gmail.com",
+        password:"akshat@",
+    });
 
-app.get("/user",(req,res)=>{
     try{
-    throw new error("ajsh");
-    res.send("user authorized");
+        await user.save();
+        res.send("User created");
     } catch(err){
-        res.status(500).send("something wrong");
+        res.status(400).send("errpr in creating user:"+ err.message);
     }
+
 });
 
-app.use("/",(err,req,res,next)=>{
-    if(err){
-    res.status(500).send("something went wrong");
-}
-});
 
-app.listen(2000, () => {
-  console.log("Server is running on port 2000");
-});
+ connectDB()
+  .then(() => {
+    console.log("Database connected");
+    app.listen(2000, () => {
+        console.log("Server is running on port 2000");
+      });
+  })
+  .catch((err) => {
+    console.log("error in connecting database");
+  });
+
