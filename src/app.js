@@ -12,7 +12,7 @@ app.use(express.json());
 //       if(!users){
 //           res.status(404).send("user not found");
 //       }
-//       else { 
+//       else {
 //           res.send(users);
 //       }
 //     } catch (err) {
@@ -27,7 +27,7 @@ app.use(express.json());
 //       if(!users){
 //           res.status(404).send("user not found");
 //       }
-//       else { 
+//       else {
 //           res.send(users);
 //       }
 //     } catch (err) {
@@ -42,7 +42,7 @@ app.use(express.json());
 //     if(users.length === 0){
 //         res.status(404).send("user not found");
 //     }
-//     else { 
+//     else {
 //         res.send(users);
 //     }
 //   } catch (err) {
@@ -50,20 +50,17 @@ app.use(express.json());
 //   }
 // });
 
-app.get("/feed", async(req,res)=>{
-    try{
-        const users = await User.find({});
-        if(users.length === 0){
-            res.status(404).send("no user found");
-        }
-        else {
-            res.send(users);
-        }
-
-    }catch(err){
-        res.status(400).send("something went wrong");
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      res.status(404).send("no user found");
+    } else {
+      res.send(users);
     }
-
+  } catch (err) {
+    res.status(400).send("something went wrong");
+  }
 });
 
 app.post("/signup", async (req, res) => {
@@ -76,28 +73,30 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.delete("/user",async(req,res)=>{
-    const userId = req.body.Id;
-    try{
-        const users = await User.findByIdAndDelete(userId);
-        res.send("user deleted");
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
+app.delete("/user", async (req, res) => {
+  const userId = req.body.Id;
+  try {
+    const users = await User.findByIdAndDelete(userId);
+    res.send("user deleted");
+  } catch (err) {
+    res.status(400).send("something went wrong");
+  }
 });
 
-app.patch("/user",async(req,res)=>{
-    const userEmail = req.body.emailId;
-    const data = req.body;
-    console.log(data);
-    try{
-        await User.findOneAndUpdate({emailId:userEmail}, data);
-        res.send("user updated");
-    }catch(err){
-        res.status(400).send("something went wrong");
-    }
+app.patch("/user", async (req, res) => {
+  const userEmail = req.body.emailId;
+  const data = req.body;
+  console.log(data);
+  try {
+    await User.findOneAndUpdate({ emailId: userEmail }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+    res.send("user updated");
+  } catch (err) {
+    res.status(400).send("Update Failed" + err.message);
+  }
 });
-
 
 connectDB()
   .then(() => {
