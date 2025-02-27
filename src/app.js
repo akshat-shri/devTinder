@@ -83,12 +83,24 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
-  const userEmail = req.body.emailId;
+app.patch("/user/:userId", async (req, res) => {
+  const userId = req.params?.userId;
   const data = req.body;
   console.log(data);
+
   try {
-    await User.findOneAndUpdate({ emailId: userEmail }, data, {
+    const ALLOWED_UPDATES = ["age", "gender", "about", "skills", "photourl"];
+
+    const isUpdatedAllowed = Object.keys(data).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdatedAllowed) {
+      throw new Error("Update not allowed");
+    }
+    if(data?.skills.length>10){
+      throw new Error("skills should be less than 10");
+    }
+    await User.findOneAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
       runValidators: true,
     });
