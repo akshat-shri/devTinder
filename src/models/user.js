@@ -31,8 +31,6 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minLength: 4,
-      maxLength: 50,
       validate(value){
         if(!validator.isStrongPassword(value)){
             throw new Error("invalid Email"+ value);
