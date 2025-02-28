@@ -3,9 +3,13 @@ const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const connectDB = require("./config/database");
 const app = express();
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const User = require("./models/user");
+const { userAuth } = require("./middlewares/auth");
 
 app.use(express.json());
+app.use(cookieParser());
 
 // app.get("/user", async (req, res) => {
 //     const userId = req.body.Id;
@@ -97,16 +101,36 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
+      const token = await user.getJWT();
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
+
       res.send("login successfully");
-    }
-    else{
+    } else {
       throw new Error("Invalid credentials");
     }
   } catch (err) {
-    res.status(400).send("ERROR:"+ err.message);
+    res.status(400).send("ERROR:" + err.message);
   }
+});
+
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR:" + err.message);
+  }
+});
+
+app.post("/sendConnectionRequest", userAuth, async (req, res) => {
+  const user = req.user;
+  console.log("sending a connection request");
+
+  res.send(user.firstName + "sent the connection request");
 });
 
 app.delete("/user", async (req, res) => {
